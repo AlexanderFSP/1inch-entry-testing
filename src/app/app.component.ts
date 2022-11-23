@@ -3,6 +3,7 @@ import { ChainId } from '@core/models/chain-id.model';
 import { IWethContract, WethContractService } from '@core/services/contracts/weth-contract.service';
 import { EthersProviderService } from '@core/services/ethers-provider.service';
 import { EthersSignerService } from '@core/services/ethers-signer.service';
+import { ethers } from 'ethers';
 import { filter } from 'rxjs';
 
 @Component({
@@ -13,7 +14,10 @@ import { filter } from 'rxjs';
 export class AppComponent implements OnInit {
   private wethContractWithSigner?: IWethContract;
 
+  public readonly SPENDER_ADDRESS = '0x6CD8401984a8dD15382dcbB44d87DD249472FD8b';
   public readonly GOERLI_CHAIN_ID = ChainId.GOERLI;
+
+  public txHash?: string;
 
   constructor(
     public readonly ethersProviderService: EthersProviderService,
@@ -29,6 +33,14 @@ export class AppComponent implements OnInit {
 
   public onConnect(): void {
     this.ethersProviderService.requestAccounts();
+  }
+
+  public async onApprove(): Promise<void> {
+    const tx = (await this.wethContractWithSigner!.approve(this.SPENDER_ADDRESS, 1)) as ethers.ContractTransaction;
+
+    this.txHash = tx.hash;
+
+    await tx.wait(1);
   }
 
   private setup(): void {

@@ -2,10 +2,9 @@ import { Injectable } from '@angular/core';
 import { ethers } from 'ethers';
 import { EthersContractService } from '../ethers-contract.service';
 
-/**
- * TODO: Define needed methods..
- */
-export interface IWethContract extends ethers.Contract {}
+export interface IWethContract extends ethers.Contract {
+  approve: ethers.ContractFunction;
+}
 
 @Injectable({
   providedIn: 'root'
