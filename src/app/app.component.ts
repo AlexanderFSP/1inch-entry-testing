@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ChainId } from '@core/models/chain-id.model';
+import { ChainId } from '@core/models';
 import { IWethContract, WethContractService } from '@core/services/contracts/weth-contract.service';
 import { EthersProviderService } from '@core/services/ethers-provider.service';
 import { EthersSignerService } from '@core/services/ethers-signer.service';
@@ -18,6 +18,8 @@ export class AppComponent implements OnInit {
   public readonly GOERLI_CHAIN_ID = ChainId.GOERLI;
 
   public txHash?: string;
+  public txNonce?: number;
+  public txBlockNonce?: string;
 
   constructor(
     public readonly ethersProviderService: EthersProviderService,
@@ -39,15 +41,16 @@ export class AppComponent implements OnInit {
     const tx = (await this.wethContractWithSigner!.approve(this.SPENDER_ADDRESS, 1)) as ethers.ContractTransaction;
 
     this.txHash = tx.hash;
+    this.txNonce = tx.nonce;
 
     await tx.wait(1);
+
+    this.txBlockNonce = (await this.ethersProviderService.getBlock('latest')).nonce;
   }
 
   private setup(): void {
     this.ethersSignerService.currentAccount$.pipe(filter(currentAccount => !!currentAccount)).subscribe(() => {
       this.wethContractWithSigner = this.ethersSignerService.connectWithContract(this.wethContractService.create());
-
-      // TODO: Impl. other stuff..
     });
   }
 }

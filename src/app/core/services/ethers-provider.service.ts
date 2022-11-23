@@ -63,6 +63,12 @@ export class EthersProviderService {
     return this.provider!.send('eth_requestAccounts', []) as Promise<string[]>;
   }
 
+  public getBlock(
+    blockHashOrBlockTag: ethers.providers.BlockTag | Promise<ethers.providers.BlockTag>
+  ): Promise<ethers.providers.Block> {
+    return this.provider!.getBlock(blockHashOrBlockTag);
+  }
+
   private setupSigner(): void {
     this.ethersSignerService.setSigner(this.provider!.getSigner());
 
