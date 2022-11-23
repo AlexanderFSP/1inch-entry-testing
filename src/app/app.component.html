@@ -3,3 +3,11 @@
   [currentAccount]="ethersSignerService.currentAccount$ | async"
   (connect)="onConnect()"
 ></app-metamask-account>
+
+<ng-container *ngIf="ethersSignerService.currentAccount$ | async">
+  <ng-container *ngIf="(ethersProviderService.networkId$ | async) === GOERLI_CHAIN_ID; else wrongChainIdTplRef">
+    <!-- TODO: Impl. -->
+  </ng-container>
+
+  <ng-template #wrongChainIdTplRef> Wrong chain id. Please, switch to Goerli testnet. </ng-template>
+</ng-container>
